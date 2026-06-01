@@ -1,0 +1,43 @@
+---
+title: "Open Storefront: Browse 3DS Content from Your Terminal"
+sidebarTitle: "Introduction"
+description: "Open Storefront is a cross-platform Python CLI that lets you browse nested 3DS storefronts and download homebrew content — with zero external dependencies."
+---
+
+Open Storefront is an open-source, cross-platform Python terminal client for browsing and downloading content from 3DS storefronts hosted on Google Drive. It is designed for homebrew enthusiasts who want a lightweight, dependency-free way to explore and download 3DS titles, utilities, and custom storefronts — all from a simple numbered menu in their terminal, on any operating system.
+
+## How It Works
+
+When you launch Open Storefront, it fetches a `storefront.json` manifest file from a Google Drive-hosted storefront and presents its contents as an interactive numbered menu. Each entry in the menu is either a downloadable file or a link to a nested sub-storefront — another `storefront.json` that opens its own menu in-place. You navigate by typing the number next to an item and pressing Enter. Typing `x` at any point returns you to the top-level home storefront, making it easy to hop between catalogues without restarting the program.
+
+By default the client points to a pre-configured home storefront (Google Drive file ID `1m99FhKG-zpNd7VoAOjFV11dyJsDbnUv9`), but you can override this with your own `home.3sf` file to point at any storefront you choose.
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card title="Cross-Platform" icon="laptop">
+    Runs on Windows, macOS, and Linux. Screen clearing is handled automatically per-platform (`cls` on Windows, `clear` elsewhere), so the menu always looks clean regardless of your OS.
+  </Card>
+  <Card title="Zero External Dependencies" icon="box-open">
+    Built entirely on the Python standard library — `urllib.request`, `json`, `os`, `platform`, `pathlib`, and `sys`. No `pip install` step is ever required.
+  </Card>
+  <Card title="Nested Storefront Navigation" icon="folder-tree">
+    Storefronts can contain links to other storefronts. Open Storefront follows these links seamlessly, letting you drill down into sub-catalogues and return home with a single `x` keystroke.
+  </Card>
+  <Card title="Custom Download Path" icon="folder-open">
+    Place a `download_path.txt` file next to `main.py` to redirect all downloaded files to a directory of your choice, instead of the default home directory.
+  </Card>
+  <Card title="Custom Home Storefront" icon="house">
+    Create a `home.3sf` file containing a Google Drive file ID to replace the built-in default storefront with any storefront you manage or prefer.
+  </Card>
+  <Card title="Input Automation & Batch Download" icon="robot">
+    Place an `input` file containing pre-recorded keystrokes (one per line) next to the script to replay navigation automatically. Type `all` during a session to enqueue downloads for every non-storefront item in the current menu, and `dump` to save your current input log to disk.
+  </Card>
+  <Card title="PyInstaller Compatible" icon="cube">
+    The script detects whether it is running as a frozen PyInstaller binary (`sys.frozen`) and resolves paths relative to the executable, so it can be compiled into a standalone `.exe` or binary with no Python installation required on the target machine.
+  </Card>
+</CardGroup>
+
+<Note>
+  Open Storefront is licensed under the **GNU General Public License v3.0 (GPL-3.0)**. You are free to use, modify, and redistribute it under the terms of that licence. See the [project repository](https://github.com/drake-rochelle/open-storefront) for the full licence text.
+</Note>

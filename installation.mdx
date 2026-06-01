@@ -1,0 +1,99 @@
+---
+title: "Installing Open Storefront on Windows, macOS, and Linux"
+sidebarTitle: "Installation"
+description: "Install Open Storefront by cloning the repository or downloading a pre-built binary. Requires Python 3 — no additional packages needed."
+---
+
+Open Storefront is distributed as a single Python script that you can run directly from the cloned repository, or as a standalone binary compiled with PyInstaller for machines that do not have Python installed. Both methods are described below. Choose the one that best fits your environment.
+
+## Installation Methods
+
+<Tabs>
+  <Tab title="Run from Source">
+    Running from source is the simplest approach and works on any machine with Python 3 installed. No build step is required.
+
+    **1. Clone the repository**
+
+    ```bash
+    git clone https://github.com/drake-rochelle/open-storefront.git
+    cd open-storefront
+    ```
+
+    If you prefer not to use Git, download the ZIP archive from [github.com/drake-rochelle/open-storefront](https://github.com/drake-rochelle/open-storefront) and extract it to a folder of your choice.
+
+    **2. Launch the client**
+
+    ```bash
+    python main.py
+    ```
+
+    On some systems the Python 3 interpreter is invoked as `python3`:
+
+    ```bash
+    python3 main.py
+    ```
+
+    The client will print your download path, fetch the home storefront from Google Drive, and display the interactive menu. No further setup is needed.
+  </Tab>
+
+  <Tab title="Pre-built Binary">
+    If you want to run Open Storefront on a machine without a Python installation — or if you want to distribute a ready-to-run executable — you can compile `main.py` into a standalone binary using [PyInstaller](https://pyinstaller.org).
+
+    Open Storefront is fully compatible with PyInstaller. The script detects when it is running as a frozen executable via `sys.frozen` and resolves all file paths relative to the compiled binary rather than the original `.py` source file, so features like `download_path.txt` and `home.3sf` continue to work correctly next to the `.exe` or binary.
+
+    For step-by-step instructions on building the binary yourself, see the **Building with PyInstaller** page in the Advanced section of this documentation.
+
+    Once you have a binary, simply place it in a folder of your choice and double-click (or run from the terminal) — no Python installation is required on the target machine.
+  </Tab>
+</Tabs>
+
+## System Requirements
+
+| Requirement | Details |
+|---|---|
+| **Python version** | Python 3.x (any recent 3.x release). Not required when using a pre-built binary. |
+| **Operating system** | Windows, macOS, or Linux |
+| **Internet connection** | Required at runtime to fetch `storefront.json` manifests from Google Drive |
+| **Disk space** | Negligible for the script itself; varies based on content you download |
+
+## Optional Configuration Files
+
+These files are not required but let you customise the client's behaviour. Place them in the same directory as `main.py` (or the compiled binary).
+
+| File | Purpose |
+|---|---|
+| `download_path.txt` | Override the default download location (your home directory). Paste the absolute path to your preferred folder on a single line. The placeholder value `C:/Path/To/Custom/Download/Folder` is ignored. |
+| `home.3sf` | Override the default home storefront. Paste a Google Drive file ID on a single line to use a different storefront as your starting point. |
+| `input` | Pre-recorded input file for automation. Each line is replayed as a keystroke. |
+
+<Note>
+  No `pip install` step is ever needed. Open Storefront uses only Python standard library modules: `urllib.request`, `json`, `os`, `platform`, `pathlib`, and `sys`. If Python 3 is installed, you can run the script immediately after cloning — nothing else is required.
+</Note>
+
+## Troubleshooting
+
+<Accordion title="'python' is not recognized as a command (Windows)">
+  Python has not been added to your system `PATH`. The quickest fix is to re-run the Python installer, check **"Add Python to PATH"** on the first screen, and then open a new terminal window.
+
+  Alternatively, add the Python installation directory (e.g. `C:\Users\YourName\AppData\Local\Programs\Python\Python3x\`) and its `Scripts` sub-folder to your `PATH` environment variable manually via **System Properties → Environment Variables**.
+
+  On macOS and Linux the interpreter is usually available as `python3` — try that if `python` is not found.
+</Accordion>
+
+<Accordion title="storefront.json not found or menu does not appear">
+  `storefront.json` is not a file you need to provide — it is fetched automatically from Google Drive every time the client loads or navigates to a storefront. If the menu does not appear after `Loading...`, check the following:
+
+  - **Internet connection** — the client requires outbound HTTPS access to `drive.google.com`.
+  - **Firewall or proxy** — ensure that `urllib.request` (Python's built-in HTTP client) is not being blocked by a corporate firewall or proxy. If you are behind a proxy, set the `HTTPS_PROXY` environment variable before running the script.
+  - **Google Drive availability** — confirm that the target Google Drive file ID is correct and that the file is shared publicly ("Anyone with the link").
+</Accordion>
+
+<Accordion title="Files are downloading to the wrong location">
+  By default, all files are saved under your home directory (`~`), organised into sub-folders defined by the storefront manifest. To change this, create a `download_path.txt` file in the same directory as `main.py` and write the full absolute path to your preferred download folder on a single line — for example:
+
+  ```
+  D:\3DS Downloads
+  ```
+
+  Make sure the value is not the placeholder `C:/Path/To/Custom/Download/Folder`, which the client ignores.
+</Accordion>

@@ -1,0 +1,68 @@
+---
+title: "Downloading Files with Open Storefront"
+sidebarTitle: "Downloading"
+description: "Understand how Open Storefront downloads 3DS content, where files are saved by default, and how to batch-download all items in a storefront."
+---
+
+When you select a non-storefront item from any menu, Open Storefront immediately begins fetching it from Google Drive and saves it to your local machine. This page covers how the download process works, where files end up, and how to download everything in a storefront at once using the `all` command.
+
+## How Downloads Work
+
+After you enter the index number of a downloadable item, Open Storefront:
+
+1. Clears the screen and prints `Downloading...`
+2. Reads the item's remote URL, filename, and target sub-path from the loaded storefront data.
+3. Constructs the full local destination path:
+   ```text
+   <local_path><sub-path>/<filename>
+   ```
+4. Creates any missing directories along that path automatically (`os.makedirs` with `exist_ok=True`).
+5. Fetches the file with `urllib.request.urlretrieve` and writes it to the destination.
+6. Clears the screen once more and prints:
+   ```text
+   Download successfull.
+   Enter any symbol to return to storefront...
+   ```
+   Press any key to go back to the current menu.
+
+<Info>
+  The sub-path stored in each storefront item may contain the string `/3DS Storefront/`. Open Storefront automatically replaces every occurrence of `/3DS Storefront/` with `/Open Storefront/` before writing to disk. This keeps your local folder structure tidy under a single `Open Storefront` directory regardless of how the remote storefront was originally organised.
+</Info>
+
+## Default Download Location
+
+By default, files are saved inside your **home directory** (`~`). For example, a game whose stored sub-path is `/Open Storefront/Games/` and whose filename is `Mario Kart 7.cia` would be written to:
+
+```text
+~/Open Storefront/Games/Mario Kart 7.cia
+```
+
+On different platforms this expands to:
+
+| Platform | Expanded path |
+|---|---|
+| Windows | `C:\Users\YourName\Open Storefront\...` |
+| macOS | `/Users/YourName/Open Storefront/...` |
+| Linux | `/home/yourname/Open Storefront/...` |
+
+## Batch Downloading with `all`
+
+To download every non-storefront item in the currently displayed menu at once, type `all` at the prompt and press **Enter**.
+
+```text
+Super 3DS Vault:
+
+x: <home>
+0: Animal Crossing - New Leaf.cia
+1: Mario Kart 7.cia
+2: Pokemon X.cia
+3: More Games
+
+> all
+```
+
+Open Storefront will iterate through every item in the menu, skip anything of type `storefront` (such as **More Games** in the example above), and download each remaining file in order. You will see the `Downloading...` and confirmation screens cycle for each file.
+
+<Tip>
+  You can change where downloaded files are saved by creating a `download_path.txt` file next to `main.py`. See [Configuration](usage/configuration) for step-by-step instructions.
+</Tip>

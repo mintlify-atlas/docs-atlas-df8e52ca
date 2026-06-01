@@ -1,0 +1,111 @@
+---
+title: "Storefront JSON Format Reference"
+sidebarTitle: "Overview"
+description: "Learn the storefront.json format that Open Storefront parses — how to define downloadable files, nested sub-storefronts, and auto-run scripts."
+---
+
+A storefront is a plain JSON file that the Open Storefront client fetches from Google Drive and parses at runtime. It describes a menu of items that users can browse in the terminal: each item is either a downloadable file or a link to another nested storefront. The client displays every key in the object as a labelled menu option, and the associated array value tells it exactly what to do when the user selects that option.
+
+## Top-Level Structure
+
+A storefront file is a single JSON object. Each key becomes the label shown to the user in the terminal menu. Each value is a JSON array whose contents depend on whether the entry points to a downloadable file or to another storefront.
+
+```json
+{
+  "<Menu Label>": [ /* entry array */ ],
+  "<Another Label>": [ /* entry array */ ]
+}
+```
+
+## Entry Types
+
+<Tabs>
+  <Tab title="File Entry">
+    A file entry tells the client to download a resource to the user's local machine. The array must contain exactly three elements.
+
+    ```json
+    {
+      "MyApp.3dsx": [
+        "https://drive.google.com/uc?export=download&id=1XyzAbcDef",
+        "MyApp.3dsx",
+        "/3DS Storefront/Homebrew"
+      ]
+    }
+    ```
+
+    | Field | Position | Description |
+    |---|---|---|
+    | `download_url` | `[0]` | The full HTTP/HTTPS URL the client passes to `urllib.request.urlretrieve` to fetch the file. Any publicly accessible direct-download URL is valid — it does not have to be a Google Drive link. |
+    | `filename` | `[1]` | The name the file is saved as on disk. This is appended to the resolved destination path. |
+    | `destination_path` | `[2]` | The directory path on the user's device where the file is saved. Paths that begin with `/3DS Storefront/` are automatically rewritten to `/Open Storefront/` at download time. See [Path Format](#path-format) for details. |
+  </Tab>
+  <Tab title="Storefront Entry">
+    A storefront entry tells the client to open another storefront JSON file hosted on Google Drive. The array contains exactly two elements — no destination path is needed because nothing is downloaded to disk.
+
+    ```json
+    {
+      "My Sub-Storefront": [
+        "1AbcDefGhiJklMnoPqrStuVwx",
+        "storefront"
+      ]
+    }
+    ```
+
+    | Field | Position | Description |
+    |---|---|---|
+    | `google_drive_id` | `[0]` | The Google Drive file ID of the target storefront JSON. The client constructs the fetch URL as `https://drive.google.com/uc?export=download&id=<google_drive_id>`. |
+    | `type` | `[1]` | Must be the literal string `"storefront"`. This is how the client distinguishes a sub-storefront from a downloadable file. |
+
+    <Note>
+      Storefront entries only require two array elements. Unlike file entries, they do not include a destination path because the linked file is parsed as a menu, not saved to disk.
+    </Note>
+  </Tab>
+</Tabs>
+
+## Full Example
+
+The following `storefront.json` demonstrates both entry types together — one sub-storefront link and one downloadable file:
+
+```json
+{
+  "My Sub-Storefront": [
+    "1AbcDefGhiJklMnoPqrStuVwx",
+    "storefront"
+  ],
+  "MyApp.3dsx": [
+    "https://drive.google.com/uc?export=download&id=1XyzAbcDef",
+    "MyApp.3dsx",
+    "/3DS Storefront/Homebrew"
+  ]
+}
+```
+
+When the client loads this storefront the user sees two menu items: selecting `My Sub-Storefront` navigates into the linked storefront, while selecting `MyApp.3dsx` downloads the file to the resolved Homebrew directory.
+
+## Special Key: `main.txt`
+
+If a storefront contains a key named exactly `main.txt`, the client handles it automatically before drawing the menu. It downloads the associated file, reads its contents, and executes them as Python code using `exec()`. After execution completes, the client pushes `x` into the input buffer, which navigates the user back to the home storefront.
+
+The `main.txt` entry follows the same three-element file-entry format as any other file:
+
+```json
+{
+  "main.txt": [
+    "https://drive.google.com/uc?export=download&id=1PVhOfO-V71eq5B89ZJoYor-zu1-yEvP6",
+    "main.txt",
+    "/3DS Storefront/Documents"
+  ]
+}
+```
+
+This mechanism is intended for storefronts that need to run setup logic or inject dynamic behaviour when first opened.
+
+<Warning>
+  The contents of `main.txt` are executed directly as Python code with full access to the runtime environment. Only include a `main.txt` entry in storefronts you completely trust. Loading a storefront from an unknown or untrusted source that contains `main.txt` is equivalent to running arbitrary code on your machine.
+</Warning>
+
+## Path Format
+
+Destination paths in file entries conventionally start with `/3DS Storefront/` followed by a subdirectory name. At download time the client automatically replaces the `/3DS Storefront/` prefix with `/Open Storefront/`, so files land in the correct location on the user's machine regardless of whether the storefront was originally authored for an older path convention.
+
+For example, a destination of `/3DS Storefront/Homebrew` resolves to `~/Open Storefront/Homebrew` (or the equivalent under the user's configured download path). All intermediate directories are created automatically if they do not already exist.

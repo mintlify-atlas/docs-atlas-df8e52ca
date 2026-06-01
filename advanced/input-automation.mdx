@@ -1,0 +1,62 @@
+---
+title: "Automate Downloads with the Input Buffer"
+sidebarTitle: "Input Automation"
+description: "Use an input file and special commands like 'all' and 'dump' to automate navigation and batch-download content from storefronts in Open Storefront."
+---
+
+Open Storefront includes a lightweight input automation system that lets you pre-record a sequence of commands and replay them on the next run. This is useful for batch-downloading content unattended, scripting a consistent workflow, or sharing a reproducible navigation path with others. The system works by loading an `input` file at startup and draining it line-by-line before the client prompts for real user input.
+
+## How the Input File Works
+
+Place a plain-text file named `input` (no extension) in the same directory as `main.py` or your compiled binary. Each line in the file represents exactly one key press — the same value you would type at the prompt. When the client starts, it reads every line into an internal **input buffer**. From that point on, each time the client would normally ask you for input it pops the next line from the buffer instead. Once the buffer is empty, the client falls back to normal interactive input.
+
+```text input
+0
+3
+```
+
+The example above navigates into item `0` (such as a sub-storefront) and then selects item `3` within it — equivalent to typing those two values interactively.
+
+## Automation Commands
+
+In addition to the numeric menu indices you would type normally, several special commands are available during automated (and interactive) sessions.
+
+| Command | Effect |
+|---------|--------|
+| `0`, `1`, `2` … | Navigate to or download the item at that menu index, just as in normal use. |
+| `x` | Return to the home storefront. |
+| `all` | Select every non-storefront item in the current menu for download. The client expands this into a sequence of numeric indices followed by `n` (confirm) entries and injects them into the front of the buffer. |
+| `dump` | Write the current session's input log to the `input` file, then continue. Use this to capture an interactive session for later replay. |
+
+<Tip>
+  The `all` command is ideal for bulk-downloading every downloadable item in a storefront section in one unattended pass. Navigate into the section you want first, then let `all` handle the rest. It skips sub-storefront entries automatically, so only actual downloadable files are queued.
+</Tip>
+
+<Warning>
+  Automated navigation runs at full speed with no pauses between steps. Before replaying an `input` file, make sure the storefront structure matches what was recorded. If the menu has changed — items added, removed, or reordered — the buffer indices may point to the wrong entries.
+</Warning>
+
+## Recording and Replaying a Session
+
+<Steps>
+  <Step title="Run the client interactively">
+    Launch Open Storefront normally and navigate through the menus to the content you want to download. Make all your selections as usual. The client silently logs every command you enter in the background.
+  </Step>
+  <Step title="Type `dump` to save the session">
+    At any input prompt, type `dump` and press Enter. The client writes everything you have entered so far to a file named `input` in the script directory, then resumes waiting for your next command. You can continue using the client normally after this.
+  </Step>
+  <Step title="Replay on the next run">
+    The next time you launch Open Storefront, it detects the `input` file and loads your recorded commands into the buffer. The client replays every step automatically, downloading the same content without any interaction required. Once the buffer is exhausted, the client returns to interactive mode.
+  </Step>
+</Steps>
+
+## Example: Batch-Download an Entire Section
+
+The following `input` file navigates into sub-storefront `0`, then uses `all` to download every non-storefront item found there:
+
+```text input
+0
+all
+```
+
+When `all` is reached, the client inspects the current menu, builds the full list of downloadable-item indices interleaved with `n` confirmations, and injects them into the buffer — so every file downloads in sequence with no further input needed.

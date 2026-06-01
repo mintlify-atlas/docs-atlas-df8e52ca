@@ -1,47 +1,119 @@
 ---
-title: "Quickstart"
-description: "Begin with a guide on the fastest path to a successful outcome"
+title: "Get Started with Open Storefront in Minutes"
+sidebarTitle: "Quickstart"
+description: "Learn how to download, run, and browse your first 3DS storefront using Open Storefront in three simple steps."
 ---
 
-Describe how someone begins using your product. What is the first thing they need to do? Are there any prerequisites?
-
-A quickstart should take someone from zero to using your product. They'll get a quick win and a sense of what they can accomplish.
+Open Storefront requires nothing beyond a standard Python 3 installation. In less than a minute you can clone the repository, launch the client, and be browsing 3DS content from your terminal. This guide walks you through every step and shows you exactly what to expect on screen.
 
 ## Prerequisites
 
-Before you begin, you must have:
+- **Python 3.x** — any recent Python 3 release works. Download it from [python.org](https://www.python.org/downloads/) if you do not already have it.
+- **Internet access** — the client fetches `storefront.json` live from Google Drive each time you open or navigate to a storefront.
+- **No pip packages** — every module Open Storefront uses ships with Python itself.
 
-- Requirement one (for example, Node.js 18+, a free account, an API key)
-- Requirement two (for example, a compatible device, a compatible browser, a compatible operating system)
-
-## Get started
+## Steps
 
 <Steps>
-  <Step title="Install">
-    Describe how to install your product or sign up.
+  <Step title="Clone the repository">
+    Clone the Open Storefront repository from GitHub to a directory of your choice.
 
     ```bash
-    npm install your-package
+    git clone https://github.com/drake-rochelle/open-storefront.git
+    cd open-storefront
     ```
+
+    Alternatively you can download a ZIP archive from the same URL and extract it manually.
   </Step>
-  <Step title="Configure">
-    Describe any setup or configuration needed before first use.
+
+  <Step title="Run the client">
+    Launch the script with your system Python 3 interpreter.
 
     ```bash
-    your-cli init
+    python main.py
     ```
+
+    The program immediately prints your resolved download path (your home directory by default), then fetches the home storefront from Google Drive:
+
+    ```
+    /home/yourname
+    Loading...
+    ```
+
+    Once the manifest has downloaded, the screen clears and the main menu appears.
   </Step>
-  <Step title="Run it">
-    Show the first thing a user does to see it working.
 
-    ```bash
-    your-cli start
+  <Step title="Navigate the storefront">
+    The menu lists everything in the current storefront. Each line starts with a number you can type to select that item.
+
     ```
+    Home Storefront:
+
+    0: Games
+    1: Utilities
+    2: Themes
+    3: My Favourite App.cia
+    ```
+
+    - Type a **number** and press Enter to open a sub-storefront or download a file.
+    - Type **`x`** and press Enter to return to the Home Storefront from anywhere.
+
+    When you select a downloadable file the screen shows `Downloading...`, then confirms success:
+
+    ```
+    Download successfull.
+    Enter any symbol to return to storefront...
+    ```
+
+    Press any key to go back to the current menu.
   </Step>
 </Steps>
 
-<Tip>
-  Give people a way to get help. This could be a link to a support page, a chat with a customer support agent, or a forum for your product.
+## Example Terminal Session
 
-  Example: Need help? Reach out to us at [support@yourcompany.com](mailto:support@yourcompany.com).
+Below is a representative session showing menu navigation, entering a sub-storefront, and downloading a file.
+
+```
+/home/yourname
+Loading...
+```
+
+*(screen clears)*
+
+```
+Home Storefront:
+
+0: Games
+1: Utilities
+2: Themes
+```
+
+*User types `0` → enters the Games sub-storefront:*
+
+```
+Games:
+
+x: <home>
+0: Action
+1: RPG
+2: Some Homebrew Game.cia
+```
+
+*User types `2` → downloads the file:*
+
+```
+Downloading...
+```
+
+*(screen clears)*
+
+```
+Download successfull.
+Enter any symbol to return to storefront...
+```
+
+*User presses Enter → returns to the Games menu.*
+
+<Tip>
+  On first run, if no `home.3sf` file is present next to `main.py`, Open Storefront automatically connects to the **default home storefront** identified by Google Drive file ID `1m99FhKG-zpNd7VoAOjFV11dyJsDbnUv9`. To use a different storefront as your home, create a `home.3sf` file in the same directory as `main.py` and paste your preferred Google Drive file ID as its only content.
 </Tip>

@@ -1,0 +1,68 @@
+---
+title: "Configuring Open Storefront: Paths and Home Storefront"
+sidebarTitle: "Configuration"
+description: "Configure Open Storefront's download directory and home storefront using two plain-text config files: download_path.txt and home.3sf."
+---
+
+Open Storefront is configured through two optional plain-text files that live in the same directory as `main.py`. Neither file is required — sensible defaults are used when either is absent — but creating them lets you control exactly where downloads land and which storefront loads on startup.
+
+<Steps>
+
+  <Step title="download_path.txt — Custom Download Directory">
+
+    By default, Open Storefront saves all downloaded content inside your home directory (`~`). To redirect downloads to a different folder, create a file named `download_path.txt` in the same directory as `main.py` and write your desired path on a single line.
+
+    **Format:** one absolute path, no trailing newline required.
+
+    <Tabs>
+      <Tab title="Windows">
+        ```text
+        C:/Users/YourName/3DS Downloads
+        ```
+      </Tab>
+      <Tab title="Linux / macOS">
+        ```text
+        /home/user/3ds
+        ```
+      </Tab>
+    </Tabs>
+
+    At startup, Open Storefront reads this file and uses the path it contains as the root for all downloads. The path replaces `~` in the download destination, so a file whose storefront sub-path is `/Open Storefront/Games/` would be saved to:
+
+    ```text
+    /home/user/3ds/Open Storefront/Games/filename.cia
+    ```
+
+    **Default placeholder:** if `download_path.txt` exists but contains exactly the string `C:/Path/To/Custom/Download/Folder`, the file is treated as unconfigured and the default home directory (`~`) is used instead. Edit the placeholder to your real path to activate the override.
+
+    ```text
+    C:/Path/To/Custom/Download/Folder
+    ```
+
+    <Warning>
+      Open Storefront calls `os.makedirs` with `exist_ok=True` to create any missing directories along the download path automatically. However, if the root drive or parent mount point does not exist (for example, a disconnected external drive on Windows), the download will fail with a system error. Always make sure the top-level portion of the path is accessible before downloading.
+    </Warning>
+
+  </Step>
+
+  <Step title="home.3sf — Custom Home Storefront">
+
+    When Open Storefront launches — or when you press `x` to go home — it loads a storefront from a hardcoded Google Drive file ID. To point it at your own storefront instead, create a file named `home.3sf` in the same directory as `main.py` and paste your storefront's Google Drive file ID on a single line.
+
+    **Format:** one Google Drive file ID (the alphanumeric string from a shareable Drive link), no extra whitespace.
+
+    ```text
+    1A2B3C4D5E6F7G8H9I0J1K2L3M
+    ```
+
+    On every startup and every `x` press, Open Storefront checks for `home.3sf`. If the file is found, the ID inside it is used; otherwise the built-in default ID `1m99FhKG-zpNd7VoAOjFV11dyJsDbnUv9` is loaded.
+
+    <Note>
+      The file must contain only the raw Drive ID — not a full URL. For example, use `1A2B3C4D5E6F7G8H9I0J1K2L3M`, not `https://drive.google.com/file/d/1A2B3C4D5E6F7G8H9I0J1K2L3M/view`.
+    </Note>
+
+    To learn how to create and host your own `storefront.json` file so you can point `home.3sf` at it, see [Creating a Custom Home Storefront](advanced/custom-home).
+
+  </Step>
+
+</Steps>

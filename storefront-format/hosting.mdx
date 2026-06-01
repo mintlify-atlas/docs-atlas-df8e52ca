@@ -1,0 +1,75 @@
+---
+title: "Hosting a Storefront on Google Drive"
+sidebarTitle: "Hosting"
+description: "Step-by-step guide to creating and hosting your own Open Storefront-compatible storefront.json file on Google Drive for public distribution."
+---
+
+Google Drive is the native hosting platform for Open Storefront because the client fetches storefront files directly from Drive's public download endpoint. Any Google account can host a storefront for free — all you need is a `storefront.json` file, a few minutes to upload and share it, and a file ID to hand out to users.
+
+## Publishing Your Storefront
+
+<Steps>
+  <Step title="Create your storefront.json file">
+    Build your `storefront.json` following the structure described in the [Storefront JSON Format Reference](/storefront-format/overview). Each key is a menu label and each value is a two-element array for a sub-storefront or a three-element array for a downloadable file.
+
+    ```json
+    {
+      "My Sub-Storefront": [
+        "1AbcDefGhiJklMnoPqrStuVwx",
+        "storefront"
+      ],
+      "MyApp.3dsx": [
+        "https://drive.google.com/uc?export=download&id=1XyzAbcDef",
+        "MyApp.3dsx",
+        "/3DS Storefront/Homebrew"
+      ]
+    }
+    ```
+
+    Save the file with any name you like — the client does not require it to be named `storefront.json` on Drive, since it is fetched by ID.
+  </Step>
+  <Step title="Upload the file to Google Drive">
+    Open [Google Drive](https://drive.google.com) and upload your storefront file. Once uploaded, open the file's sharing settings and set access to **Anyone with the link** with at least **Viewer** permission. The client fetches the file without any authentication, so public access is required for it to load correctly.
+  </Step>
+  <Step title="Copy the file ID from the share URL">
+    After sharing, open the file's share link. It will look like this:
+
+    ```text
+    https://drive.google.com/file/d/1AbcDefGhiJklMnoPqrStuVwx/view?usp=sharing
+    ```
+
+    The file ID is the segment between `/d/` and `/view`. In the example above the ID is:
+
+    ```text
+    1AbcDefGhiJklMnoPqrStuVwx
+    ```
+
+    Copy this value — it is what the client uses to build the download URL and what you will share with users.
+  </Step>
+  <Step title="Verify the direct-download URL">
+    Before distributing your storefront, confirm the file downloads correctly by constructing its direct-download URL and opening it in a browser:
+
+    ```text
+    https://drive.google.com/uc?export=download&id=<FILE_ID>
+    ```
+
+    Replace `<FILE_ID>` with the ID you copied in the previous step. The browser should prompt you to download or display the raw JSON content. If it shows an error, double-check that the file is publicly shared.
+  </Step>
+  <Step title="Share your storefront ID with users">
+    Give users your file ID so they can access your storefront. Users can navigate to it directly by entering the full 15-or-more-character ID at the menu prompt, or they can set it as their home storefront by placing the ID in a file named `home.3sf` in the same directory as the client. If no `home.3sf` file exists, the client falls back to the default home storefront ID `1m99FhKG-zpNd7VoAOjFV11dyJsDbnUv9`.
+  </Step>
+</Steps>
+
+## Hosting Nested Sub-Storefronts
+
+<Tip>
+  Each sub-storefront is its own independent JSON file on Google Drive. To build a hierarchy, upload a separate storefront file for each category or section, make each one publicly shared, and reference the child file's ID in the parent storefront using a `"storefront"` entry. You can nest storefronts as many levels deep as you need — the client will navigate through them one at a time.
+</Tip>
+
+## Hosting Downloadable Files
+
+The `download_url` field in a file entry accepts any publicly accessible HTTP or HTTPS URL — it does not have to point to Google Drive. The client passes the URL directly to `urllib.request.urlretrieve`, so any direct-download link from any host works. This means you can mix Google Drive links, GitHub release assets, or any other static file hosting service within the same storefront.
+
+<Info>
+  Google Drive shows an interstitial warning page for files above a certain size threshold instead of serving the file directly. Open Storefront does not bypass this warning, so the download may fail or produce an HTML file instead of the expected content. For larger files, consider hosting on an alternative service that provides true direct-download URLs without size-gating, such as GitHub Releases or a static file host.
+</Info>

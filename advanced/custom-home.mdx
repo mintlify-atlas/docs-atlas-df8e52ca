@@ -1,0 +1,51 @@
+---
+title: "Set a Custom Home Storefront with home.3sf"
+sidebarTitle: "Custom Home"
+description: "Replace Open Storefront's default home storefront by placing a home.3sf file containing your Google Drive storefront ID in the application directory."
+---
+
+Every time Open Storefront launches — and every time you press `x` to return home — it loads a storefront from a Google Drive file ID. By default that ID points to the shared community home storefront. Placing a `home.3sf` file in the same directory as `main.py` (or your compiled binary) tells the client to use your own storefront ID instead, letting you ship a fully pre-configured client that opens straight to your content.
+
+## What `home.3sf` Does
+
+When the client starts up, it checks whether a file named `home.3sf` exists in its directory. If the file is present, the client reads the Google Drive file ID stored inside and uses it as the home storefront. If the file is absent, the built-in default is used.
+
+The same check runs every time you press `x`. That means the home storefront is always read fresh from `home.3sf` — you can update the file without restarting the client.
+
+<Note>
+  If `home.3sf` is not present, Open Storefront falls back to the default community home storefront (`1m99FhKG-zpNd7VoAOjFV11dyJsDbnUv9`). No configuration is required to use the community storefront.
+</Note>
+
+## Creating `home.3sf`
+
+Place a plain-text file named `home.3sf` in the same directory as `main.py` (or next to your compiled binary). The file should contain **only** the Google Drive file ID of your `storefront.json` — no spaces, no quotes, no newline required.
+
+```text
+1AbcDefGhiJklMnoPqrStuVwxyz12345
+```
+
+That's the entire file. One line, one ID.
+
+## Getting Your File ID
+
+The file ID is the long alphanumeric string in a Google Drive share link. For example:
+
+```text
+https://drive.google.com/file/d/1AbcDefGhiJklMnoPqrStuVwxyz12345/view?usp=sharing
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                  This portion is your file ID
+```
+
+For a full walkthrough of how to host a `storefront.json` on Google Drive and obtain its ID, see the [Hosting on Google Drive](/storefront-format/hosting) guide.
+
+## Behavior at Runtime
+
+- **Startup** — the client reads `home.3sf` (if present) before loading anything else, then opens that storefront as "Home Storefront".
+- **`x` command** — returns to the home storefront by re-reading `home.3sf` (or the default ID) and reloading. Changes to the file take effect immediately on the next `x` press.
+- The label shown in the menu header is always **"Home Storefront"** regardless of which ID is used.
+
+## Use Case: Distributing a Pre-Configured Client
+
+If you maintain your own 3DS content storefront, you can distribute a copy of Open Storefront to your users with a `home.3sf` already in place. When they launch the client they will land directly on your storefront rather than the community home, with no additional setup needed on their end.
+
+When building a standalone binary, place `home.3sf` next to the compiled executable — see [Building a Standalone Executable](/advanced/building) for details.

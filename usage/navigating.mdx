@@ -1,0 +1,91 @@
+---
+title: "Navigating Storefronts in Open Storefront"
+sidebarTitle: "Navigating"
+description: "Learn how to move through nested 3DS storefronts, jump to any storefront by ID, and return to the home screen using Open Storefront's menu commands."
+---
+
+Open Storefront presents 3DS content as a tree of nested storefronts, each loaded from a `storefront.json` file hosted on Google Drive. Once the client launches you interact entirely through a numbered text menu — no mouse required. This page explains every navigation command available at that menu prompt.
+
+## The Menu
+
+Each time you enter a storefront, the screen is cleared and the menu is redrawn. The current storefront's name is printed at the top, followed by a numbered list of all items it contains.
+
+```text
+Super 3DS Vault:
+
+x: <home>
+0: New Releases
+1: Classic Games
+2: Homebrew
+3: Legend of Zelda - Link's Awakening.cia
+```
+
+- The **storefront name** appears on the first line, followed by a colon.
+- `x: <home>` is shown whenever you are not already on the Home Storefront, giving you a quick way to get back.
+- Each item is prefixed with its **index number** starting at `0`.
+
+## Navigation Commands
+
+| Command | Action |
+|---|---|
+| `0`, `1`, `2`… | Select an item by its index number |
+| `x` | Return to the home storefront |
+| `<Google Drive ID>` (15+ characters) | Jump directly to any storefront by its Google Drive file ID |
+
+### Selecting an item by number
+
+Type the number shown next to an item and press **Enter**. What happens next depends on the item's type:
+
+- **Storefront item** — if the selected item is of type `storefront`, Open Storefront loads that sub-storefront and redraws the menu for it. You can keep drilling down through as many levels as the storefront tree offers.
+- **Downloadable item** — if the item is anything other than a `storefront`, the file is fetched from Google Drive and saved to your downloads folder. See [Downloading Files](usage/downloading) for full details.
+
+### Returning home with `x`
+
+Entering `x` at any menu prompt resets navigation back to the home storefront and reloads it from Google Drive.
+
+<Note>
+  If a `home.3sf` file is present in the same directory as `main.py`, pressing `x` loads the storefront ID stored in that file rather than the built-in default. This lets you set your own home storefront. See [Configuration](usage/configuration) for details.
+</Note>
+
+### Jumping to a storefront by Google Drive ID
+
+If you enter a string of **15 or more characters**, Open Storefront treats it as a raw Google Drive file ID and navigates directly to that storefront — no menu selection needed. The storefront name is temporarily displayed as `Unknown Storefront` until a proper name can be resolved from the loaded content.
+
+This is useful for sharing direct links to specific storefronts or for quickly switching between unrelated libraries without going through the home menu.
+
+## Sample Terminal Session
+
+The following session shows launching the client, browsing into a sub-storefront, and returning home.
+
+```text
+Home Storefront:
+
+0: Nintendo eShop Collection
+1: Homebrew Hub
+2: My Favourite Titles
+
+> 0
+
+Nintendo eShop Collection:
+
+x: <home>
+0: Animal Crossing - New Leaf.cia
+1: Mario Kart 7.cia
+2: More Games
+
+> 2
+
+More Games:
+
+x: <home>
+0: Kirby - Triple Deluxe.cia
+1: Pokemon X.cia
+
+> x
+
+Home Storefront:
+
+0: Nintendo eShop Collection
+1: Homebrew Hub
+2: My Favourite Titles
+```

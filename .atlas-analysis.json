@@ -1,0 +1,71 @@
+{
+  "projectType": "cli-tool",
+  "projectName": "Open Storefront",
+  "projectDescription": "An open-source, cross-platform interactive terminal client for browsing and downloading content from 3DS storefronts.",
+  "theme": "aspen",
+  "primaryColor": "#E84545",
+  "lightColor": "#FF6B6B",
+  "darkColor": "#C0392B",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart",
+              "installation"
+            ]
+          },
+          {
+            "group": "Usage",
+            "pages": [
+              "usage/navigating",
+              "usage/downloading",
+              "usage/configuration"
+            ]
+          },
+          {
+            "group": "Storefront Format",
+            "pages": [
+              "storefront-format/overview",
+              "storefront-format/hosting"
+            ]
+          },
+          {
+            "group": "Advanced",
+            "pages": [
+              "advanced/custom-home",
+              "advanced/input-automation",
+              "advanced/building"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Browse nested 3DS storefronts hosted on Google Drive",
+    "Download homebrew and other 3DS content directly from the terminal",
+    "Cross-platform support (Windows, macOS, Linux)",
+    "Custom download path configuration via download_path.txt",
+    "Custom home storefront via home.3sf",
+    "Input automation and batch downloading with input buffer",
+    "Can be compiled to a standalone executable with PyInstaller",
+    "Zero external dependencies — uses Python standard library only"
+  ],
+  "publicApiSurface": [
+    "main.py — entry point, run directly with Python",
+    "storefront.json — storefront data format (key: [url/id, type/filename, path])",
+    "download_path.txt — override default download directory",
+    "home.3sf — override default home storefront Google Drive ID",
+    "input — input automation file (pre-recorded key sequences)",
+    "Navigation command: numeric index to select items",
+    "Navigation command: x to return to home storefront",
+    "Navigation command: 15+ char string to open storefront by Google Drive ID directly",
+    "Navigation command: dump to write current input log to file",
+    "Navigation command: all to batch-download all non-storefront items"
+  ]
+}
