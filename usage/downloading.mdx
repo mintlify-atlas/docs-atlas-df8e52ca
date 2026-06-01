@@ -1,10 +1,10 @@
 ---
-title: "Downloading Files with Open Storefront"
+title: "How Open Storefront Downloads and Saves 3DS Content"
 sidebarTitle: "Downloading"
-description: "Understand how Open Storefront downloads 3DS content, where files are saved by default, and how to batch-download all items in a storefront."
+description: "Understand how Open Storefront downloads 3DS content, where files are saved by default, and how to trigger batch downloads through scripted input."
 ---
 
-When you select a non-storefront item from any menu, Open Storefront immediately begins fetching it from Google Drive and saves it to your local machine. This page covers how the download process works, where files end up, and how to download everything in a storefront at once using the `all` command.
+When you select a non-storefront item from any menu, Open Storefront immediately begins fetching it from Google Drive and saves it to your local machine. This page covers how the download process works, where files end up, and how to download everything in a storefront at once using the `all` command via scripted input.
 
 ## How Downloads Work
 
@@ -47,7 +47,13 @@ On different platforms this expands to:
 
 ## Batch Downloading with `all`
 
-To download every non-storefront item in the currently displayed menu at once, type `all` at the prompt and press **Enter**.
+The `all` command queues a download of every non-storefront item in the currently displayed menu. It works by building a sequence of index numbers — one for each downloadable item — with an `n` inserted between each to automatically dismiss the "press any key to return" prompt after every download.
+
+<Warning>
+  `all` only works when processed from a scripted input file — not when typed interactively at the prompt. Input entries from a file preserve their trailing newline characters, which is what the `all` check requires. To use `all`, place it on its own line in an `input` file alongside any other commands you want to automate. See [Input Automation](advanced/input-automation) for details.
+</Warning>
+
+When the `all` command is processed, Open Storefront iterates through every item in the menu, skips anything of type `storefront`, and queues the remaining items for sequential download. For example, given this menu:
 
 ```text
 Super 3DS Vault:
@@ -57,11 +63,9 @@ x: <home>
 1: Mario Kart 7.cia
 2: Pokemon X.cia
 3: More Games
-
-> all
 ```
 
-Open Storefront will iterate through every item in the menu, skip anything of type `storefront` (such as **More Games** in the example above), and download each remaining file in order. You will see the `Downloading...` and confirmation screens cycle for each file.
+Running `all` would queue downloads for items `0`, `1`, and `2`, skipping `3` (a storefront). You will see the `Downloading...` and confirmation screens cycle for each file in order.
 
 <Tip>
   You can change where downloaded files are saved by creating a `download_path.txt` file next to `main.py`. See [Configuration](usage/configuration) for step-by-step instructions.

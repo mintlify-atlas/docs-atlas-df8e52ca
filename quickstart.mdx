@@ -1,7 +1,7 @@
 ---
-title: "Get Started with Open Storefront in Minutes"
+title: "Open Storefront: Clone, Launch, and Browse 3DS Content"
 sidebarTitle: "Quickstart"
-description: "Learn how to download, run, and browse your first 3DS storefront using Open Storefront in three simple steps."
+description: "Clone the Open Storefront repo, run main.py, and start browsing and downloading 3DS content from Google Drive storefronts in three quick steps."
 ---
 
 Open Storefront requires nothing beyond a standard Python 3 installation. In less than a minute you can clone the repository, launch the client, and be browsing 3DS content from your terminal. This guide walks you through every step and shows you exactly what to expect on screen.
@@ -35,7 +35,7 @@ Open Storefront requires nothing beyond a standard Python 3 installation. In les
 
     The program immediately prints your resolved download path (your home directory by default), then fetches the home storefront from Google Drive:
 
-    ```
+    ```text
     /home/yourname
     Loading...
     ```
@@ -46,7 +46,7 @@ Open Storefront requires nothing beyond a standard Python 3 installation. In les
   <Step title="Navigate the storefront">
     The menu lists everything in the current storefront. Each line starts with a number you can type to select that item.
 
-    ```
+    ```text
     Home Storefront:
 
     0: Games
@@ -56,11 +56,11 @@ Open Storefront requires nothing beyond a standard Python 3 installation. In les
     ```
 
     - Type a **number** and press Enter to open a sub-storefront or download a file.
-    - Type **`x`** and press Enter to return to the Home Storefront from anywhere.
+    - Type **`x`** and press Enter to return to the Home Storefront from any sub-storefront.
 
     When you select a downloadable file the screen shows `Downloading...`, then confirms success:
 
-    ```
+    ```text
     Download successfull.
     Enter any symbol to return to storefront...
     ```
@@ -73,14 +73,14 @@ Open Storefront requires nothing beyond a standard Python 3 installation. In les
 
 Below is a representative session showing menu navigation, entering a sub-storefront, and downloading a file.
 
-```
+```text
 /home/yourname
 Loading...
 ```
 
 *(screen clears)*
 
-```
+```text
 Home Storefront:
 
 0: Games
@@ -90,7 +90,7 @@ Home Storefront:
 
 *User types `0` → enters the Games sub-storefront:*
 
-```
+```text
 Games:
 
 x: <home>
@@ -101,13 +101,13 @@ x: <home>
 
 *User types `2` → downloads the file:*
 
-```
+```text
 Downloading...
 ```
 
 *(screen clears)*
 
-```
+```text
 Download successfull.
 Enter any symbol to return to storefront...
 ```

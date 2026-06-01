@@ -1,7 +1,7 @@
 ---
-title: "Navigating Storefronts in Open Storefront"
+title: "Navigating Storefronts and Menu Commands in Open Storefront"
 sidebarTitle: "Navigating"
-description: "Learn how to move through nested 3DS storefronts, jump to any storefront by ID, and return to the home screen using Open Storefront's menu commands."
+description: "Learn every menu command available in Open Storefront — numeric selection, home navigation, direct storefront IDs, batch download, and input log export."
 ---
 
 Open Storefront presents 3DS content as a tree of nested storefronts, each loaded from a `storefront.json` file hosted on Google Drive. Once the client launches you interact entirely through a numbered text menu — no mouse required. This page explains every navigation command available at that menu prompt.
@@ -31,6 +31,7 @@ x: <home>
 | `0`, `1`, `2`… | Select an item by its index number |
 | `x` | Return to the home storefront |
 | `<Google Drive ID>` (15+ characters) | Jump directly to any storefront by its Google Drive file ID |
+| `dump` | Write the current input log to a file named `input` |
 
 ### Selecting an item by number
 
@@ -52,6 +53,14 @@ Entering `x` at any menu prompt resets navigation back to the home storefront an
 If you enter a string of **15 or more characters**, Open Storefront treats it as a raw Google Drive file ID and navigates directly to that storefront — no menu selection needed. The storefront name is temporarily displayed as `Unknown Storefront` until a proper name can be resolved from the loaded content.
 
 This is useful for sharing direct links to specific storefronts or for quickly switching between unrelated libraries without going through the home menu.
+
+### Batch downloading with `all`
+
+Entering `all` queues a batch download of every non-storefront item in the current menu. Because this command is processed from the scripted input buffer (where entries preserve their newline characters), `all` is intended for use in automated input files rather than typed interactively at the prompt. See [Downloading Files](usage/downloading) for details on how the batch sequence is built, and [Input Automation](advanced/input-automation) for how to create an input file.
+
+### Exporting the input log with `dump`
+
+Entering `dump` at any prompt writes the session's recorded input history to a file named `input` in the working directory, then continues reading the next command normally. This is useful for capturing a session to replay later as an automated input file.
 
 ## Sample Terminal Session
 

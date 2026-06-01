@@ -1,5 +1,5 @@
 ---
-title: "Automate Downloads with the Input Buffer"
+title: "Automate Storefront Downloads with the Input Buffer"
 sidebarTitle: "Input Automation"
 description: "Use an input file and special commands like 'all' and 'dump' to automate navigation and batch-download content from storefronts in Open Storefront."
 ---
@@ -25,7 +25,7 @@ In addition to the numeric menu indices you would type normally, several special
 |---------|--------|
 | `0`, `1`, `2` … | Navigate to or download the item at that menu index, just as in normal use. |
 | `x` | Return to the home storefront. |
-| `all` | Select every non-storefront item in the current menu for download. The client expands this into a sequence of numeric indices followed by `n` (confirm) entries and injects them into the front of the buffer. |
+| `all` | Select every non-storefront item in the current menu for download. The client expands this into a sequence of numeric indices interleaved with `n` entries and injects them into the front of the buffer. Storefront-type items are skipped automatically. |
 | `dump` | Write the current session's input log to the `input` file, then continue. Use this to capture an interactive session for later replay. |
 
 <Tip>
@@ -59,4 +59,4 @@ The following `input` file navigates into sub-storefront `0`, then uses `all` to
 all
 ```
 
-When `all` is reached, the client inspects the current menu, builds the full list of downloadable-item indices interleaved with `n` confirmations, and injects them into the buffer — so every file downloads in sequence with no further input needed.
+When `all` is reached, the client inspects the current menu, builds the full list of downloadable-item indices interleaved with `n` entries, and injects them into the front of the buffer — so every file downloads in sequence with no further input needed.

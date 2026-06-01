@@ -1,7 +1,7 @@
 ---
-title: "Build a Standalone Open Storefront Executable"
+title: "Build a Standalone Open Storefront Binary with PyInstaller"
 sidebarTitle: "Building"
-description: "Package Open Storefront into a standalone binary using PyInstaller so end users can run it without installing Python."
+description: "Package Open Storefront into a self-contained binary using PyInstaller so end users can run it on any machine without installing Python."
 ---
 
 Open Storefront is a single Python script, which means anyone who wants to run it normally needs Python installed. By using PyInstaller you can bundle the script and all its dependencies into one self-contained executable that runs on Windows, macOS, or Linux with no Python installation required — making it much easier to distribute to end users.
@@ -44,14 +44,14 @@ You need **Python 3** and **PyInstaller** on the machine where you build the exe
     You can rename and distribute this file freely.
   </Step>
   <Step title="Copy config files next to the binary">
-    The executable looks for configuration files in the **same directory as itself**, not in the original source tree. Copy any config files you want to ship alongside the binary:
+    The executable looks for configuration files **in the directory from which it is run**. Copy any config files you want to ship alongside the binary:
 
     ```bash
     cp download_path.txt dist/
     cp home.3sf dist/
     ```
 
-    Neither file is required — the client runs without them using built-in defaults — but if you want to pre-configure a custom download path or a custom home storefront, the files must sit next to the binary.
+    Neither file is required — the client runs without them using built-in defaults — but if you want to pre-configure a custom download path or a custom home storefront, the files must be present in the working directory when the binary is launched.
   </Step>
 </Steps>
 
@@ -66,17 +66,17 @@ else:
     SCRIPT_DIR = Path(__file__).resolve().parent
 ```
 
-In frozen mode, `SCRIPT_DIR` resolves to the folder containing the executable rather than the original source file. All config file lookups — `download_path.txt`, `home.3sf`, and `input` — are relative to `SCRIPT_DIR`, so they are found correctly regardless of where the user runs the binary from.
+In frozen mode, `SCRIPT_DIR` resolves to the folder containing the executable rather than the original source file. The `download_path.txt` config file is looked up relative to `SCRIPT_DIR`, so it is found correctly regardless of where the user runs the binary from. Other files (`home.3sf`, `input`, and `storefront.json`) are opened using bare filenames, so they are resolved relative to the current working directory at runtime.
 
 ## Config File Placement After Building
 
-Once you have built and moved the binary out of the `dist/` folder, keep config files co-located with it:
+Once you have built and moved the binary out of the `dist/` folder, keep config files co-located with it and run the binary from that same directory:
 
 ```text
 my-storefront/
 ├── main.exe          ← the binary
-├── download_path.txt ← optional: custom download directory
-└── home.3sf          ← optional: custom home storefront ID
+├── download_path.txt ← optional: custom download directory (SCRIPT_DIR-relative)
+└── home.3sf          ← optional: custom home storefront ID (CWD-relative)
 ```
 
 Placing them anywhere else (such as the original source tree) will have no effect when running the compiled executable.
